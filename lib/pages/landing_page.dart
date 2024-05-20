@@ -1,6 +1,6 @@
 // This is the landing page of the application
 import 'package:flutter/material.dart';
-import 'package:uscis/pages/home.dart';
+import 'package:uscis/pages/search_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -58,8 +58,10 @@ class _LandingPageState extends State<LandingPage> {
               // this widget contains the button which will redirect to home page
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Home()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SearchPage()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 160),
