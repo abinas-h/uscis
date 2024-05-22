@@ -1,5 +1,11 @@
+import 'dart:developer';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:uscis/controller/user.dart';
+import 'package:uscis/models/users_cases.dart';
+import 'package:uscis/pages/case_page.dart';
 import 'package:uscis/pages/page_footer.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -9,6 +15,10 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+
+  List<SearchedCase> cases =[];
+
+  static SearchedCase? searchedCase;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
             margin: EdgeInsets.only(left: 30, right: 30, top: 50),
 
             // Title part of the SearchPage page
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -29,13 +39,16 @@ class _SearchPageState extends State<SearchPage> {
                       fontSize: 37,
                       fontWeight: FontWeight.w500),
                 ),
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Colors.black,
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 18.0,
+                GestureDetector(
+                  onTap: () => {},
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black,
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 18.0,
+                    ),
                   ),
                 )
               ],
@@ -52,7 +65,24 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    onChanged: (value) {},
+                    onSubmitted: (value) async {
+                      http.Response response = await User().getUser(value);
+
+                      if (response.statusCode == 200) {
+                        searchedCase = searchedCaseFromJson(response.body);
+                        CasePage(searchedCase);
+                        debugPrint(response.body);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Please enter a valid receipt number.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Color.fromARGB(255, 20, 19, 19),
+                            fontSize: 16.0);
+                      }
+                    },
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 30),
                         filled: true,
@@ -112,5 +142,8 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
+
+
+    
   }
 }
